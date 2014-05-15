@@ -15,13 +15,17 @@ Use pandoc for conversion, use ack for search, git for version control
 
  - notoj init - create a new note directory
  - notoj new <name> - create a new note
- - notoj git ... - pass command to git in the directory
- - notoj make ... - make html / latex
- - notoj search <query> - search the notes
+ - notoj edit - edits an existing thing
  - notoj serve - serve the notes
- - notoj list - list all of the notes
  - notoj notebook - start a new ipython notebook
  - notoj view - simple previewer (terminal / html / pdf)
+ - notoj conf - edit configuration
+
+ - notoj git ... - pass command to git in the directory
+ - notoj make ... - make html / latex
+ 
+ - notoj search <query> - search the notes
+ - notoj list - list all of the notes
 
 Layout of directory
 

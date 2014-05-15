@@ -3,98 +3,69 @@
 A simple note organizer, taker
 
  - notoj init - create a new note directory
+
+    * can optionally handle notebooks
  - notoj new <name> - create a new note
+ - notoj copy
+ - notoj move
+ - notoj delete
+ - notoj edit - edits an existing thing
+
+ - notoj serve - serve the notes
+ - notoj view - simple previewer (terminal / html / pdf)
+ - notoj search <query> - search the notes
+ - notoj list - list all of the notes
+
  - notoj git ... - pass command to git in the directory
  - notoj make ... - make html / latex
- - notoj search <query> - search the notes
- - notoj serve - serve the notes
- - notoj list - list all of the notes
- - notoj notebook - start a new ipython notebook
- - notoj view - simple previewer (terminal / html / pdf)
+ - notoj grep ... - run grep
+
+ - notoj conf - edit configuration
+ - notoj --version
+ - notoj --help
 """
 
 import os
-import click
+import argparse
+import subprocess
 from config import settings
 
-class Config(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(settings)
-        self.__dict__.update(kwargs)
 
-pass_config = click.make_pass_decorator(Config, ensure=True)
+def usage(args):
+    parser.print_usage()
 
-@click.group()
-@click.pass_context
-def notoj(ctx, **kwargs):
-    ctx.obj = Config(**kwargs)
+# FUNCTIONS
+def init(args):
+    """ Initialize the repo, create the directory and populate with
+    a skeleton, make a git repository and do the first commit """
+    print "init"
 
-# show configuration
-@notoj.command()
-@pass_config
-def conf(config):
-    click.echo(config.__dict__)
 
-# initialize the directory
-@notoj.command()
-@pass_config
-def init(config):
-    click.echo(config.path)
-    click.echo("INIT")
+def git(args):
+    """ Run git commands in the appropriate directory """
+    print "git"
+    print args.git_args
 
-# Create a new note
-@notoj.command()
-@pass_config
-def new(config):
-    click.echo("New")
+# PARSERS
+parser = argparse.ArgumentParser(prog='notoj')
+parser.set_defaults(**settings)
+parser.add_argument('--path',type=str)
+parser.add_argument('--version',action='version',version='%(prog)s 0.1')
+# parser.set_defaults(func=usage)
 
-# edit existing note
-@notoj.command()
-@pass_config
-def edit(config):
-    click.echo("edit")
+subparsers = parser.add_subparsers(title='subcommands')
 
-# run a git command
-@notoj.command()
-@pass_config
-def git(config):
-    click.echo("git")
+parser_init = subparsers.add_parser('init', help='initialize note repo')
+parser_init.set_defaults(func=init)
 
-# make the output
-@notoj.command()
-@pass_config
-def make(config):
-    click.echo("make")
+parser_git = subparsers.add_parser('git', help='run git commands in repo dir')
+parser_git.add_argument('git_args', metavar='git-args', nargs=argparse.REMAINDER)
+parser_git.set_defaults(func=git)
 
-# search for a note
-@notoj.command()
-@pass_config
-def search(config):
-    click.echo("search")
 
-# serve the static site
-@notoj.command()
-@pass_config
-def serve(config):
-    click.echo("serve")
 
-# list all of the notes
-@notoj.command()
-@pass_config
-def ls(config):
-    click.echo("ls")
-
-# create a new ipython notebook
-@notoj.command()
-@pass_config
-def notebook(config):
-    click.echo("notebook")
-
-# view a note in the browser
-@notoj.command()
-@pass_config
-def view(config):
-    click.echo("view")
-
+# MAIN
 if __name__ == "__main__":
-    notoj()
+    args = parser.parse_args()
+    args.func(args)
+
